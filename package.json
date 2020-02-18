@@ -28,6 +28,7 @@
     "faker": "4.1.0",
     "graphql-yoga": "1.17.4",
     "jsonwebtoken": "8.4.0",
+    "rimraf": "^3.0.2",
     "scuid": "1.1.0"
   },
   "prettier": {
