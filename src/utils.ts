@@ -16,3 +16,15 @@ export const getUserId = ctx => {
 
   throw new Error('Not Authorized');
 };
+
+// Generate a uniform probability histogram
+export const probabilityHistogram = bins => {
+  const independent = []
+  let total = 0
+  for (let i = 0; i < bins; i++) {
+    const weight = Math.random()
+    total += weight
+    independent.push(weight)
+  }
+  return independent.map(weight => weight / total)
+}
