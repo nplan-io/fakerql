@@ -1,6 +1,6 @@
 import * as scuid from 'scuid';
 
-import { generateAuthToken, getUserId, probabilityHistogram } from '../utils';
+import { generateAuthToken, getUserId, probabilityHistogram, topicWords } from '../utils';
 
 const DEFAULT_COUNT = 25;
 
@@ -97,8 +97,8 @@ export default {
           avatar: faker.image.avatar()
         },
         likelyTopics: probabilityHistogram(10)
-          .map(likelihood => ({
-            label: faker.random.words(),
+          .map((likelihood, i) => ({
+            label: topicWords[i],
             likelihood: likelihood
           }))
       }));

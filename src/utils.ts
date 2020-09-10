@@ -28,3 +28,17 @@ export const probabilityHistogram = bins => {
   }
   return independent.map(weight => weight / total)
 }
+
+// Ten randomly-chosen but consistent topic nouns.
+export const topicWords = [
+  'drama',
+  'wedding',
+  'management',
+  'security',
+  'quality',
+  'fishing',
+  'client',
+  'birthday',
+  'disaster',
+  'potato'
+]
