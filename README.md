@@ -146,6 +146,10 @@ You can request a list of posts. `count` is optional and defaults to 25.
       lastName
       avatar
     }
+    likelyTopics {
+      label
+      likelihood
+    }
   }
 }
 ```
@@ -169,6 +173,10 @@ You can request a single Post by providing any ID.
       firstName
       lastName
       avatar
+    }
+    likelyTopics {
+      label
+      likelihood
     }
   }
 }
