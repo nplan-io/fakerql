@@ -17,28 +17,48 @@ export const getUserId = ctx => {
   throw new Error('Not Authorized');
 };
 
-// Generate a uniform probability histogram
-export const probabilityHistogram = bins => {
-  const independent = []
-  let total = 0
-  for (let i = 0; i < bins; i++) {
-    const weight = Math.random()
-    total += weight
-    independent.push(weight)
-  }
-  return independent.map(weight => weight / total)
-}
-
 // Ten randomly-chosen but consistent topic nouns.
 export const topicWords = [
-  'drama',
   'wedding',
-  'management',
-  'security',
-  'quality',
+  'sport',
   'fishing',
-  'client',
+  'shopping',
+  'security',
+  'management',
+  'community',
+  'celebrity',
   'birthday',
-  'disaster',
   'potato'
-]
+];
+
+export const likelyTopics = (user, title, body) => {
+  // create a custom order over the topics, based on letters as they appear in
+  // the user's name, post title, and post body, for variability
+  const alphabet = `${title} ${user} ${body}`;
+  const topicLabels = topicWords.sort((a, b) => {
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+      const aValue = alphabet.indexOf(a[i]);
+      const bValue = alphabet.indexOf(b[i]);
+      if (aValue !== bValue) {
+        return bValue - aValue;
+      }
+    }
+    return b.length - a.length;
+  })
+  // compute a biased probability distribution
+  const likelihoods = [];
+  let total = 0;
+  for (let i = 0; i < topicLabels.length; i++) {
+    const weight = Math.random() * Math.log(i + 2);
+    total += weight;
+    likelihoods.push(weight);
+  }
+  likelihoods.reverse();
+  // and associate each likelihood with a probability
+  return likelihoods.map((weight, i) => {
+    return {
+      likelihood: weight / total,
+      label: topicLabels[i]
+    }
+  }).sort((a, b) => b.likelihood - a.likelihood);
+};
