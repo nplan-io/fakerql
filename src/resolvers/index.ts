@@ -1,123 +1,121 @@
-import * as scuid from 'scuid';
+import * as scuid from 'scuid'
 
-import { generateAuthToken, getUserId, likelyTopics } from '../utils';
+import {
+  generateAuthToken,
+  getUserId,
+  likelyTopics,
+  predefinedUsers,
+} from '../utils'
 
-const DEFAULT_COUNT = 25;
+const DEFAULT_COUNT = 25
 
 export default {
   Query: {
     me: (parent, args, ctx) => {
-      const userId = getUserId(ctx);
-      const { faker } = ctx;
+      const userId = getUserId(ctx)
+      const { faker } = ctx
 
       return {
         id: userId,
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         email: faker.internet.email(),
-        avatar: faker.image.avatar()
-      };
+        avatar: faker.image.avatar(),
+      }
     },
 
-    allUsers(parent, { count = DEFAULT_COUNT }, { faker }) {
-      return new Array(count).fill(0).map(_ => ({
-        id: scuid(),
+    allUsers: (parent, { count = DEFAULT_COUNT }, { faker }) =>
+      predefinedUsers.slice(0, count),
+
+    User: (parent, { id }, { faker }) =>
+      predefinedUsers.filter((user) => user.id === id)[0] || {
+        id,
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         email: faker.internet.email(),
-        avatar: faker.image.avatar()
-      }));
-    },
-
-    User: (parent, { id }, { faker }) => ({
-      id,
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      email: faker.internet.email(),
-      avatar: faker.image.avatar()
-    }),
+        avatar: faker.image.avatar(),
+      },
 
     allProducts: (parent, { count = DEFAULT_COUNT }, { faker }) => {
-      return new Array(count).fill(0).map(_ => ({
+      return new Array(count).fill(0).map((_) => ({
         id: scuid(),
         price: faker.commerce.price(),
-        name: faker.commerce.productName()
-      }));
+        name: faker.commerce.productName(),
+      }))
     },
 
     Product: (parent, { id }, { faker }) => ({
       id,
       price: faker.commerce.price(),
-      name: faker.commerce.productName()
+      name: faker.commerce.productName(),
     }),
 
     Todo: (parent, { id }, { faker }) => ({
       id,
       title: faker.random.words(),
-      completed: faker.random.boolean()
+      completed: faker.random.boolean(),
     }),
 
     allTodos: (parent, { count = DEFAULT_COUNT }, { faker }) => {
-      return new Array(count).fill(0).map(_ => ({
+      return new Array(count).fill(0).map((_) => ({
         id: scuid(),
         title: faker.random.words(),
-        completed: faker.random.boolean()
-      }));
+        completed: faker.random.boolean(),
+      }))
     },
 
     // refactor user relation into Class
     Post: (parent, { id }, { faker }) => {
-      const title = faker.random.words();
-      const body = faker.lorem.paragraphs();
-      const firstName = faker.name.firstName();
-      const lastName = faker.name.lastName();
+      const title = faker.random.words()
+      const body = faker.lorem.paragraphs()
+      const firstName = faker.name.firstName()
+      const lastName = faker.name.lastName()
       return {
         id,
         title,
         body,
         published: faker.random.boolean(),
-        createdAt: faker.date.past(),
+        createdAt: faker.date.between(
+          new Date('2019-01-01'),
+          new Date('2019-12-31'),
+        ),
         author: {
           id: scuid(),
           firstName,
           lastName,
           email: faker.internet.email(),
-          avatar: faker.image.avatar()
+          avatar: faker.image.avatar(),
         },
-        likelyTopics: likelyTopics(
-          `${firstName} ${lastName}`,
-          title, body
-        )
-      };
+        likelyTopics: likelyTopics(`${firstName} ${lastName}`, title, body),
+      }
     },
 
     // refactor user relation into Class
     allPosts: (parent, { count }, { faker }) => {
-      return new Array(count).fill(0).map(_ => {
-        const title = faker.random.words();
-        const body = faker.lorem.paragraphs();
-        const firstName = faker.name.firstName();
-        const lastName = faker.name.lastName();
+      const usersToUse = predefinedUsers.slice(
+        0,
+        count > 200 ? Math.ceil(count / 50) : Math.ceil(count / 20),
+      )
+      return new Array(count).fill(0).map((_) => {
+        const title = faker.random.words()
+        const body = faker.lorem.paragraphs()
+        const user = usersToUse[Math.floor(Math.random() * usersToUse.length)]
+        const firstName = user.firstName
+        const lastName = user.lastName
         return {
           id: scuid(),
           title,
           body,
           published: faker.random.boolean(),
-          createdAt: faker.date.past(),
-          author: {
-            id: scuid(),
-            firstName,
-            lastName,
-            email: faker.internet.email(),
-            avatar: faker.image.avatar()
-          },
-          likelyTopics: likelyTopics(
-            `${firstName} ${lastName}`,
-            title, body
-          )
+          createdAt: faker.date.between(
+            new Date('2019-01-01'),
+            new Date('2019-12-31'),
+          ),
+          author: user,
+          likelyTopics: likelyTopics(`${firstName} ${lastName}`, title, body),
         }
-      });
-    }
+      })
+    },
   },
 
   Mutation: {
@@ -125,44 +123,44 @@ export default {
       parent,
       { email, password, expiresIn = '2d' },
       { jwtSecret },
-      info
+      info,
     ) => ({
       token: await generateAuthToken(
         { userId: scuid(), email },
         jwtSecret,
-        expiresIn
-      )
+        expiresIn,
+      ),
     }),
 
     login: async (
       parent,
       { email, password, expiresIn = '2d' },
       { jwtSecret },
-      info
+      info,
     ) => ({
       token: await generateAuthToken(
         { email, userId: scuid() },
         jwtSecret,
-        expiresIn
-      )
+        expiresIn,
+      ),
     }),
 
     updateUser: (parent, { id, firstName, lastName, email, avatar }, ctx) => {
-      const userId = getUserId(ctx);
-      const { faker } = ctx;
+      const userId = getUserId(ctx)
+      const { faker } = ctx
 
       return {
         id: userId,
         firstName: firstName === undefined ? faker.name.firstName() : firstName,
         lastName: lastName === undefined ? faker.name.lastName() : lastName,
         email: email === undefined ? faker.internet.email() : email,
-        avatar: avatar === undefined ? faker.image.avatar() : avatar
-      };
+        avatar: avatar === undefined ? faker.image.avatar() : avatar,
+      }
     },
 
     // No authentication for demo purposes
     createTodo: (parent, { title, completed }, { faker }) => {
-      const id = scuid();
+      const id = scuid()
 
       // pubsub.publish('todoAdded', {
       //   todoAdded: {
@@ -175,10 +173,10 @@ export default {
       return {
         id,
         title,
-        completed: completed === undefined ? faker.random.boolean() : completed
-      };
-    }
-  }
+        completed: completed === undefined ? faker.random.boolean() : completed,
+      }
+    },
+  },
 
   // Subscription: {
   //   todoAdded: {
@@ -196,4 +194,4 @@ export default {
   //     }
   //   }
   // }
-};
+}
