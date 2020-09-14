@@ -75,7 +75,10 @@ export default {
         title,
         body,
         published: faker.random.boolean(),
-        createdAt: faker.date.past(),
+        createdAt: faker.date.between(
+          new Date('2019-01-01'),
+          new Date('2019-12-31'),
+        ),
         author: {
           id: scuid(),
           firstName,
@@ -104,7 +107,10 @@ export default {
           title,
           body,
           published: faker.random.boolean(),
-          createdAt: faker.date.past(),
+          createdAt: faker.date.between(
+            new Date('2019-01-01'),
+            new Date('2019-12-31'),
+          ),
           author: user,
           likelyTopics: likelyTopics(`${firstName} ${lastName}`, title, body),
         }
