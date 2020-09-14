@@ -1,7 +1,6 @@
 import * as scuid from 'scuid'
 import * as jwt from 'jsonwebtoken'
 import * as faker from 'faker/locale/en'
-import { create } from 'domain'
 
 export const generateAuthToken = (payload, secret, expiresIn) =>
   jwt.sign(payload, secret, {
