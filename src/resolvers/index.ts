@@ -1,6 +1,6 @@
 import * as scuid from 'scuid';
 
-import { generateAuthToken, getUserId } from '../utils';
+import { generateAuthToken, getUserId, likelyTopics } from '../utils';
 
 const DEFAULT_COUNT = 25;
 
@@ -66,37 +66,57 @@ export default {
     },
 
     // refactor user relation into Class
-    Post: (parent, { id }, { faker }) => ({
-      id,
-      title: faker.random.words(),
-      body: faker.lorem.paragraphs(),
-      published: faker.random.boolean(),
-      createdAt: faker.date.past(),
-      author: {
-        id: scuid(),
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar()
-      }
-    }),
-
-    // refactor user relation into Class
-    allPosts: (parent, { count }, { faker }) => {
-      return new Array(count).fill(0).map(_ => ({
-        id: scuid(),
-        title: faker.random.words(),
-        body: faker.lorem.sentences(),
+    Post: (parent, { id }, { faker }) => {
+      const title = faker.random.words();
+      const body = faker.lorem.paragraphs();
+      const firstName = faker.name.firstName();
+      const lastName = faker.name.lastName();
+      return {
+        id,
+        title,
+        body,
         published: faker.random.boolean(),
         createdAt: faker.date.past(),
         author: {
           id: scuid(),
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
+          firstName,
+          lastName,
           email: faker.internet.email(),
           avatar: faker.image.avatar()
+        },
+        likelyTopics: likelyTopics(
+          `${firstName} ${lastName}`,
+          title, body
+        )
+      };
+    },
+
+    // refactor user relation into Class
+    allPosts: (parent, { count }, { faker }) => {
+      return new Array(count).fill(0).map(_ => {
+        const title = faker.random.words();
+        const body = faker.lorem.paragraphs();
+        const firstName = faker.name.firstName();
+        const lastName = faker.name.lastName();
+        return {
+          id: scuid(),
+          title,
+          body,
+          published: faker.random.boolean(),
+          createdAt: faker.date.past(),
+          author: {
+            id: scuid(),
+            firstName,
+            lastName,
+            email: faker.internet.email(),
+            avatar: faker.image.avatar()
+          },
+          likelyTopics: likelyTopics(
+            `${firstName} ${lastName}`,
+            title, body
+          )
         }
-      }));
+      });
     }
   },
 
