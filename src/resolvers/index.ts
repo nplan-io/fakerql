@@ -1,4 +1,5 @@
 import * as scuid from 'scuid'
+import { series } from '../seriesData'
 
 import {
   generateAuthToken,
@@ -26,6 +27,8 @@ export default {
 
     allUsers: (parent, { count = DEFAULT_COUNT }, { faker }) =>
       predefinedUsers.slice(0, count),
+
+    Series: () => series,
 
     User: (parent, { id }, { faker }) =>
       predefinedUsers.filter((user) => user.id === id)[0] || {

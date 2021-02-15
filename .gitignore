@@ -8,3 +8,5 @@ dist
 package-lock.json
 *.rdb
 .env*
+.vscode/settings.json
+3.0.0

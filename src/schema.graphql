@@ -37,6 +37,31 @@ type Post {
   likelyTopics: [Topic]
 }
 
+type Task {
+  id: String
+  name: String
+  code: String
+  plannedStart: String
+  plannedEnd: String
+  plannedDuration: Float
+  riskShare: Float
+  criticality: Float
+  surprise: Float
+  expectedDelayContribution: Float
+  constraintMissLikelihood: Float
+}
+
+type Series {
+  date: String!
+  planned: Float!
+  actual: Float
+  predicted: [Float]!
+  plannedWip: Int
+  tasks: [Task]
+  risk: Float!
+  tasksCount: Int
+}
+
 type Query {
   me: User
   allUsers(count: Int): [User]
@@ -47,6 +72,7 @@ type Query {
   allTodos(count: Int): [Todo]
   Post(id: ID!): Post
   allPosts(count: Int): [Post]
+  Series: [Series]
 }
 
 type Mutation {
