@@ -161,6 +161,9 @@ export default {
       }
     },
 
+    savePeriods: (parent, { periods }) =>
+      periods.map((period) => ({ id: scuid(), ...period })),
+
     // No authentication for demo purposes
     createTodo: (parent, { title, completed }, { faker }) => {
       const id = scuid()

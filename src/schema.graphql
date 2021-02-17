@@ -51,6 +51,20 @@ type Task {
   constraintMissLikelihood: Float
 }
 
+input TaskInput {
+  id: String
+  name: String
+  code: String
+  plannedStart: String
+  plannedEnd: String
+  plannedDuration: Float
+  riskShare: Float
+  criticality: Float
+  surprise: Float
+  expectedDelayContribution: Float
+  constraintMissLikelihood: Float
+}
+
 type Series {
   date: String!
   planned: Float!
@@ -58,6 +72,23 @@ type Series {
   predicted: [Float]!
   plannedWip: Int
   tasks: [Task]
+  risk: Float!
+  tasksCount: Int
+}
+
+type Period {
+  id: ID!
+  start: String!
+  end: String!
+  tasks: [Task]
+  risk: Float!
+  tasksCount: Int
+}
+
+input PeriodInput {
+  start: String!
+  end: String!
+  tasks: [TaskInput]
   risk: Float!
   tasksCount: Int
 }
@@ -80,6 +111,7 @@ type Mutation {
   login(email: String!, password: String!, expiresIn: String): AuthPayload
   updateUser(id: ID!, email: String, firstName: String, lastName: String): User
   createTodo(title: String!, completed: Boolean): Todo
+  savePeriods(periods: [PeriodInput]): [Period]
 }
 
 type Subscription {
