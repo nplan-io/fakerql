@@ -9,27 +9,10 @@ export default `# Welcome to FakerQL!
 #
 # No queries/mutations are logged.
 #
-# GraphQL endpoint is https://fakerql.com/graphql
+# GraphQL endpoint is ${window.location.origin}/graphql
 #
-# This application is available opensource
-# on GitHub: https://github.com/notrab/fakerql
+# This application is a fork of the opensource fakerql project
+# https://github.com/notrab/fakerql
 #
-# An example query might look like:
 #
-# {
-#   allProducts(count: 5) {
-#     id
-#     name
-#     price
-#   }
-# }
-#
-# An example mutation might look like:
-#
-# {
-#   register(email: "hi@jamiebarton.co.uk", password: "F4K3rqL!") {
-#     token
-#   }
-# }
-#
-`;
+`
