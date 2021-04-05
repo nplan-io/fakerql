@@ -97,7 +97,10 @@ export default {
     allPosts: (parent, { count }, { faker }) => {
       const usersToUse = predefinedUsers.slice(
         0,
-        count > 200 ? Math.ceil(count / 50) : Math.ceil(count / 20),
+        Math.min(
+          4,
+          count > 200 ? Math.ceil(count / 50) : Math.ceil(count / 20),
+        ),
       )
       return new Array(count).fill(0).map((_) => {
         const title = faker.random.words()
