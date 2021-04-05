@@ -9,10 +9,9 @@ export default `# Welcome to FakerQL!
 #
 # No queries/mutations are logged.
 #
-# GraphQL endpoint is ${window.location.origin}/graphql
+# GraphQL endpoint is /graphql
 #
 # This application is a fork of the opensource fakerql project
 # https://github.com/notrab/fakerql
-#
 #
 `

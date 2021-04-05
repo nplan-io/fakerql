@@ -1,46 +1,46 @@
-import { GraphQLServer, PubSub } from 'graphql-yoga';
-import { formatError } from 'apollo-errors';
-import * as jwt from 'express-jwt';
-import * as faker from 'faker/locale/en';
-import * as compression from 'compression';
+import { GraphQLServer, PubSub } from 'graphql-yoga'
+import { formatError } from 'apollo-errors'
+import * as jwt from 'express-jwt'
+import * as faker from 'faker/locale/en'
+import * as compression from 'compression'
 
-import resolvers from './resolvers';
+import resolvers from './resolvers'
 import defaultPlaygroundQuery from './initQuery'
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET } = process.env
 
-const pubsub = new PubSub();
+const pubsub = new PubSub()
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
   resolvers,
-  context: req => ({
+  context: (req) => ({
     ...req,
     jwtSecret: JWT_SECRET,
     faker,
-    pubsub
-  })
-});
+    pubsub,
+  }),
+})
 
-server.express.disable('x-powered-by');
+server.express.disable('x-powered-by')
 
 server.express.use(
   '/graphql',
   jwt({
     secret: JWT_SECRET,
-    credentialsRequired: false
-  })
-);
+    credentialsRequired: false,
+  }),
+)
 
-server.express.use(compression());
+server.express.use(compression())
 
 const options = {
   formatError,
   endpoint: '/graphql',
   subscriptions: '/subscriptions',
   playground: '/',
-  defaultPlaygroundQuery
-};
+  defaultPlaygroundQuery,
+}
 
 server.start(options, ({ port }) =>
-  console.log(`Server is running on PORT: ${port}`)
-);
+  console.log(`Server is running on PORT: ${port}`),
+)
