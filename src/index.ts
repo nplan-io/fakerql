@@ -1,4 +1,6 @@
-import { GraphQLServer, PubSub } from 'graphql-yoga'
+import { createSchema, createYoga } from 'graphql-yoga'
+import * as fs from 'fs'
+import * as path from 'path'
 import { formatError } from 'apollo-errors'
 import * as jwt from 'express-jwt'
 import * as faker from 'faker/locale/en'
@@ -6,41 +8,52 @@ import * as compression from 'compression'
 
 import resolvers from './resolvers'
 import defaultPlaygroundQuery from './initQuery'
+import { createServer } from 'http'
 
 const { JWT_SECRET } = process.env
 
-const pubsub = new PubSub()
-const server = new GraphQLServer({
-  typeDefs: './src/schema.graphql',
+export const schema = createSchema({
+  typeDefs: fs.readFileSync(
+    path.join(path.join(__dirname, 'schema.graphql')),
+    'utf-8',
+  ),
   resolvers,
-  context: (req) => ({
-    ...req,
-    jwtSecret: JWT_SECRET,
-    faker,
-    pubsub,
-  }),
 })
 
-server.express.disable('x-powered-by')
+const yoga = createYoga({
+  schema,
+  context: {
+    jwtSecret: JWT_SECRET,
+    faker,
+  },
+})
 
-server.express.use(
-  '/graphql',
-  jwt({
-    secret: JWT_SECRET,
-    credentialsRequired: false,
-  }),
-)
+const server = createServer(yoga)
 
-server.express.use(compression())
+server.listen(4000, () => {
+  console.info('Server is running on http://localhost:4000/graphql')
+})
 
-const options = {
-  formatError,
-  endpoint: '/graphql',
-  subscriptions: '/subscriptions',
-  playground: '/',
-  defaultPlaygroundQuery,
-}
+// server.express.disable('x-powered-by')
 
-server.start(options, ({ port }) =>
-  console.log(`Server is running on PORT: ${port}`),
-)
+// server.express.use(
+//   '/graphql',
+//   jwt({
+//     secret: JWT_SECRET,
+//     credentialsRequired: false,
+//   }),
+// )
+
+// server.express.use(compression())
+
+// const options = {
+//   formatError,
+//   endpoint: '/graphql',
+//   subscriptions: '/subscriptions',
+//   playground: '/',
+//   defaultPlaygroundQuery,
+// }
+
+// server.start(options, ({ port }) =>
+//   console.log(`Server is running on PORT: ${port}`),
+// )
